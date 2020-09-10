@@ -80,7 +80,7 @@ source $ZSH/oh-my-zsh.sh
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
-export PATH="$HOME/.local/share/yarn/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/.local/share/yarn/bin:$PATH"
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -125,5 +125,7 @@ function sway() {
 # Change node version per directory
 source $NVM_DIR/chpwd-hook.zsh
 
-# Start starship
-eval $(starship init zsh)
+autoload -Uz compinit
+compinit
+# Completion for kitty
+kitty + complete setup zsh | source /dev/stdin

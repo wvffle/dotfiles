@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [[ $# -ne 2 ]]; then
+  echo 'Usage: split_flac <cue> <flac>'
+  exit 1
+fi
+
+if ! [ -x "$(command -v shnsplit)" ]; then
+  echo Please install shntool package
+  exit 2
+fi
+
+if ! [ -x "$(command -v cuetag.sh)" ]; then
+  echo Please install cuetools package
+  exit 2
+fi
+
+tmp=`mktemp -d`
+
+# Split flac file according to cue file
+shnsplit -o flac -t "%n. %t" -d $tmp -f "$1" "$2" > /dev/null || exit 3
+
+# Tag all flac files according to cue file
+cuetag.sh "$1" $tmp/*.flac > /dev/null || exit 4
+
+# Move from tmp to source flac directory
+mv $tmp/*.flac `dirname "$2"`
+rm -rf $tmp
