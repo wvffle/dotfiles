@@ -121,7 +121,10 @@ function sway() {
 # Change node version per directory
 source $NVM_DIR/chpwd-hook.zsh
 
-autoload -Uz compinit
-compinit
 # Completion for kitty
-kitty + complete setup zsh | source /dev/stdin
+if command -v kitty &> /dev/null; then
+  autoload -Uz compinit
+  compinit
+  kitty + complete setup zsh | source /dev/stdin
+fi
+

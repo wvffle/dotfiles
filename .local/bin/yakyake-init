@@ -1,0 +1,26 @@
+#!/bin/bash
+
+while [[ `ps x | grep yakuake | grep -v grep | wc -l` -eq 0 ]]; do
+   sleep 5
+done
+
+# gomuks
+qdbus org.kde.yakuake /yakuake/tabs setTabTitle 0 gomuks
+qdbus org.kde.yakuake /yakuake/sessions runCommandInTerminal 0 gomuks
+qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.setSessionClosable 0 0
+
+
+# top
+TOP_SID=$(qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.addSession)
+TOP_TID=$(qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.terminalIdsForSessionId "$TOP_SID")
+qdbus org.kde.yakuake /yakuake/tabs setTabTitle 1 top
+qdbus org.kde.yakuake /yakuake/sessions runCommandInTerminal 1 bpytop
+qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.splitTerminalLeftRight "$TOP_TID"
+qdbus org.kde.yakuake /yakuake/sessions runCommandInTerminal 2 nvtop
+qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.setSessionClosable "$TOP_SID" 0
+
+# shell
+SH_SID=$(qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.addSession)
+qdbus org.kde.yakuake /yakuake/tabs setTabTitle 2 shell
+qdbus org.kde.yakuake /yakuake/sessions runCommandInTerminal 3 cd
+qdbus org.kde.yakuake /yakuake/sessions runCommandInTerminal 3 clear
