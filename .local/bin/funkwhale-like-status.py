@@ -1,5 +1,7 @@
 #!/bin/python
 
+# NOTE: Check out the client: https://github.com/wvffle/userscripts/blob/main/funkwhale/like-button-in-waybar.user.js
+
 from xdg.BaseDirectory import save_cache_path
 import aiohttp.web
 import asyncio
