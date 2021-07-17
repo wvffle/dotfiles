@@ -40,6 +40,7 @@ async def http_handler(request):
 
 async def websocket_handler(request):
     ws = aiohttp.web.WebSocketResponse()
+    ws.headers['Access-Control-Allow-Origin'] = '*'
     await ws.prepare(request)
     sockets.append(ws)
 
