@@ -16,13 +16,13 @@ fi
 
 echo "Setting default sink to the found bluetooth device..."
 echo "Running pactl set-default-sink $btdev"
-pactl set-default-sink "$btdev"
+#pactl set-default-sink "$btdev"
 
 echo "Setting default volume of sink to 26%"
-pactl set-sink-volume @DEFAULT_SINK@ 26%
+#pactl set-sink-volume @DEFAULT_SINK@ 26%
 
 echo "Moving all sink inputs to the default sink..."
 for i in $(pactl list sink-inputs|grep 'Sink Input'|sed 's/Sink Input #//'); do
   echo "Moving sink input $i to the default sink..."
-  pactl move-sink-input $i @DEFAULT_SINK@
+  #pactl move-sink-input $i @DEFAULT_SINK@
 done

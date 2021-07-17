@@ -1,0 +1,118 @@
+{
+  "position": "top", 
+  "height": 30,
+  "modules-left": ["sway/workspaces", "pulseaudio", "custom/playerctl", "custom/funkwhale"],
+  "modules-center": ["clock"],
+  "modules-right": ["network", "battery", "custom/f2pool-xmr", "tray", "custom/power"],
+  "sway/workspaces": {
+    "disable-scroll": true,
+    "all-outputs": false,
+    "format": "{icon}",
+    "persistent_workspaces": {
+      "01": ["eDP-1"],
+      "02": ["eDP-1"],
+      "03": ["eDP-1"],
+      "04": ["eDP-1"],
+      "05": ["eDP-1"],
+      "06": ["eDP-1"],
+      "07": ["eDP-1"],
+      "08": ["eDP-1"],
+      "09": ["eDP-1"],
+      "11": ["HDMI-A-1"],
+      "12": ["HDMI-A-1"],
+      "13": ["HDMI-A-1"],
+      "14": ["HDMI-A-1"],
+      "15": ["HDMI-A-1"],
+      "16": ["HDMI-A-1"],
+      "17": ["HDMI-A-1"],
+      "18": ["HDMI-A-1"],
+      "19": ["HDMI-A-1"]
+    },
+    "format-icons": {
+      "01": "󰈹",
+      "11": "󰈹",
+      "02": "󰅩",
+      "12": "󰅩",
+      "03": "󰆍",
+      "13": "󰆍",
+      "04": "󰊢",
+      "14": "󰊢",
+      "05": "󰉋",
+      "15": "󰉋",
+      "06": "󰓓",
+      "16": "󰓓",
+      "07": "󰨇",
+      "17": "󰨇",
+      "08": "󰝚",
+      "18": "󰝚",
+      "09": "󰭹",
+      "19": "󰭹",
+      "00": "󰚌",
+      "10": "󰚌"
+    }
+  },
+  "custom/f2pool-xmr": {
+    "format": "{}",
+    "interval": 60,
+    "exec": "/home/waff/.local/bin/f2pool-xmr.py"
+  },
+  "custom/power": {
+    "format": "󰐥",
+    "on-click": "shutdown now"
+  },
+  "clock": {
+    "format": "󰅐 {:%H:%M}",
+    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+    "format-alt": "{:%Y-%m-%d}"
+  },
+  "battery": {
+    "states": {
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": "󰂄{capacity}%",
+    "format-alt": "{time} {icon}",
+    "format-full": "󱈑 {capacity}%",
+    "format-icons": ["󱊡", "󱊢", "󱊣"]
+  },
+  "network": {
+    "format-wifi": "  {essid}",
+    "format-ethernet": "{ifname}: {ipaddr}/{cidr} 󰈁",
+    "format-linked": "{ifname} (No IP) 󰈂",
+    "format-disconnected": "󰤮 Disconnected",
+    "format-alt": "{ifname}: {ipaddr}/{cidr}"
+  },
+  "pulseaudio": {
+    "format": "{icon}  {volume}%",
+    "format-muted": "󰖁 Muted",
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": ["", "", ""]
+    },
+    "on-click": "pavucontrol"
+  },
+
+  "tray": {
+    // "icon-size": 21,
+    "spacing": 10
+  },
+
+  "custom/playerctl": {
+    "exec": "playerctl metadata --format '{{ artist }} - {{ title }}' --follow",
+    "on-click": "playerctl play-pause",
+    "on-scroll-up": "playerctl next",
+    "on-scroll-down": "playerctl previous",
+  },
+
+  "custom/funkwhale": {
+    "exec": "/home/waff/.local/bin/funkwhale-like-status.py",
+    "on-click": "curl -X POST localhost:9912",
+  },
+}

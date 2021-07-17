@@ -73,14 +73,14 @@ export NVM_DIR="$HOME/.local/share/nvm"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git nvm yarn)
+plugins=(git nvm yarn vi-mode zsh-vimode-visual)
 
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
-export PATH="$HOME/.local/bin:$HOME/.local/share/yarn/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$HOME/.local/share/yarn/bin:$HOME/.yarn/bin:$PATH"
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -127,4 +127,3 @@ if command -v kitty &> /dev/null; then
   compinit
   kitty + complete setup zsh | source /dev/stdin
 fi
-
