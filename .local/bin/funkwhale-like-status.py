@@ -5,8 +5,10 @@
 from xdg.BaseDirectory import save_cache_path
 import aiohttp.web
 import asyncio
+import select
 import signal
 import atexit
+import time
 import sys
 import os
 
@@ -14,9 +16,10 @@ import os
 HOST = os.getenv('HOST', '127.0.0.1')
 PORT = int(os.getenv('PORT', 9912))
 
+clients = []
 sockets = []
 pidfile = save_cache_path('funkwhale-like') + '/pid'
-fifo = save_cache_path('funkwhale-like') + '/fifo'
+
 
 
 def signal_handler(sig, frame):
@@ -24,8 +27,6 @@ def signal_handler(sig, frame):
 
 
 def exit_handler():
-    with open(pidfile, 'r') as file:
-        os.system(f'kill -9 {file.read()}')
     os.remove(pidfile)
 
 
@@ -38,66 +39,75 @@ async def http_handler(request):
     return res
 
 
+async def _write(string):
+    sys.stdout.write(f"{string}\n")
+    sys.stdout.flush()
+
+    for ws in clients:
+        await ws.send_str(string)
+
+
 async def websocket_handler(request):
     ws = aiohttp.web.WebSocketResponse()
     ws.headers['Access-Control-Allow-Origin'] = '*'
     await ws.prepare(request)
     sockets.append(ws)
+    last_state = None
 
     async for msg in ws:
         if msg.type == aiohttp.WSMsgType.TEXT:
-            with open(fifo, 'w') as file:
-                file.write(msg.data)
+            state = msg.data
+
+            if state != last_state:
+                last_state = state
+
+                if state == "1":
+                    await _write("󰋑")
+
+                if state == "0":
+                    await _write("󰋕")
 
     sockets.remove(ws)
     return ws
 
 
-def print_fifo():
-    last_state = None
+async def ws_client_handler(request):
+    ws = aiohttp.web.WebSocketResponse()
+    await ws.prepare(request)
+    clients.append(ws)
 
-    while True:
-        state = None
-        with open(fifo, 'rb', 0) as file:
-            state = file.read(1).decode()
+    async for msg in ws:
+        pass
 
-        if state != last_state:
-            last_state = state
+    clients.remove(ws)
+    return ws
 
-            if state == "1":
-                sys.stdout.write("󰋑\n")
-                sys.stdout.flush()
-
-            if state == "0":
-                sys.stdout.write("󰋕\n")
-                sys.stdout.flush()
+# waybar executes program per output, 
+# hence we need to connect to the websocket and get the state asynchronously
+async def ws_client():
+    session = aiohttp.ClientSession()
+    async with session.ws_connect(f'http://{HOST}:{PORT}/client') as ws:
+        async for msg in ws:
+            if msg.type == aiohttp.WSMsgType.TEXT:
+                await _write(msg.data)
+    await session.close()
 
 
 if __name__ == '__main__':
-    if not os.path.exists(fifo):
-        os.mkfifo(fifo)
-
+    # If it's a second opened program, listen to the websocket for changes
     if os.path.exists(pidfile):
-        print_fifo()
+        asyncio.run(ws_client())
         exit()
 
     with open(pidfile, 'w') as file:
-        pass
+        file.write(f'{os.getpid()}')
 
     atexit.register(exit_handler)
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
-    pid = os.fork()
-
-    if pid == 0:
-        app = aiohttp.web.Application()
-        app.router.add_route('GET', '/', websocket_handler)
-        app.router.add_route('POST', '/', http_handler)
-        aiohttp.web.run_app(app, host=HOST, port=PORT)
-        exit()
-
-    with open(pidfile, 'w') as file:
-        file.write(f'{pid}')
-    
-    print_fifo()
+    app = aiohttp.web.Application()
+    app.router.add_route('GET', '/', websocket_handler)
+    app.router.add_route('GET', '/client', ws_client_handler)
+    app.router.add_route('POST', '/', http_handler)
+    aiohttp.web.run_app(app, host=HOST, port=PORT)
