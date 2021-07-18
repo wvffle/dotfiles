@@ -91,24 +91,6 @@ export EDITOR='nvim'
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
 
-# Wayland flags
-function sway() {
-  export QT_QPA_PLATFORM=wayland-egl
-  export QT_WAYLAND_FORCE_DPI=physical
-  export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
-
-  export ECORE_EVAS_ENGINE=wayland_egl
-  export ELM_ENGINE=wayland_egl
-
-  export SDL_VIDEODRIVER=wayland
-
-  export _JAVA_AWT_WM_NONREPARENTING=1
-
-  export MOZ_ENABLE_WAYLAND=1
-
-  /usr/bin/sway $@
-}
-
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
@@ -120,10 +102,3 @@ function sway() {
 
 # Change node version per directory
 source $NVM_DIR/chpwd-hook.zsh
-
-# Completion for kitty
-if command -v kitty &> /dev/null; then
-  autoload -Uz compinit
-  compinit
-  kitty + complete setup zsh | source /dev/stdin
-fi
