@@ -27,13 +27,14 @@ output HDMI-A-1 resolution 1920x1080 position 1920,0
 # }
 
 #
-# Idle:
+# Sleep and lockscreen:
 #
 exec swayidle -w \
-         timeout 60 'swaylock -f -c 000000' \
-         timeout 80 'swaymsg "output * dpms off"' \
+         timeout 180 'swaylock -f -c 000000' \
+         timeout 240 'swaymsg "output * dpms off"' \
          resume 'swaymsg "output * dpms on"' \
-         before-sleep 'swaylock -f -c 000000'
+         before-sleep 'swaylock -f -c 000000' \
+         before-sleep 'playerctl pause'
 
 #
 # Basics:
@@ -116,10 +117,13 @@ exec swayidle -w \
     bindsym $mod+a focus parent
 
 #
-# Scratchpad:
+# Scratchpad and quickterm:
 #
-bindsym $mod+Shift+z move scratchpad
-bindsym $mod+z scratchpad show
+bindsym $mod+Shift+x move scratchpad
+bindsym $mod+x scratchpad show
+
+bindsym $mod+z exec i3-quickterm tmux
+bindsym $mod+n exec i3-quickterm js
 
 #
 # Screenshots
@@ -161,8 +165,5 @@ default_floating_border none
 smart_gaps off
 gaps inner 12
 gaps outer 2
-
-# Fix headphone jack white noise
-exec amixer -c 0 sset "Auto-Mute Mode" Enabled
 
 include ~/.config/sway/config.d/*.conf

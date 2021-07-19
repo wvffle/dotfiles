@@ -1,0 +1,13 @@
+{
+    "menu": "rofi -dmenu -p 'quickterm: ' -no-custom -auto-select",
+    "term": "alacritty",
+    "history": "{$HOME}/.cache/quickterm.order",
+    "ratio": 0.25,
+    "pos": "top",
+    "shells": {
+        "js": "node",
+        "python": "ipython3 --no-banner",
+        "shell": "{$SHELL}",
+        "tmux": "tmux a -t quickterm || tmux new -s quickterm"
+    }
+}
