@@ -2,13 +2,9 @@
 
 # NOTE: Check out the client: https://github.com/wvffle/userscripts/blob/main/funkwhale/like-button-in-waybar.user.js
 
-from xdg.BaseDirectory import save_cache_path
 import aiohttp.web
 import asyncio
-import select
-import signal
-import atexit
-import time
+import socket
 import sys
 import os
 
@@ -18,16 +14,6 @@ PORT = int(os.getenv('PORT', 9912))
 
 clients = []
 sockets = []
-pidfile = save_cache_path('funkwhale-like') + '/pid'
-
-
-
-def signal_handler(sig, frame):
-    exit()
-
-
-def exit_handler():
-    os.remove(pidfile)
 
 
 async def http_handler(request):
@@ -95,16 +81,10 @@ async def ws_client():
 
 if __name__ == '__main__':
     # If it's a second opened program, listen to the websocket for changes
-    if os.path.exists(pidfile):
-        asyncio.run(ws_client())
-        exit()
-
-    with open(pidfile, 'w') as file:
-        file.write(f'{os.getpid()}')
-
-    atexit.register(exit_handler)
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        if s.connect_ex((HOST, PORT)) == 0:
+            asyncio.run(ws_client())
+            exit()
 
     app = aiohttp.web.Application()
     app.router.add_route('GET', '/', websocket_handler)
