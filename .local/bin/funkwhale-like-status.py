@@ -15,12 +15,13 @@ PORT = int(os.getenv('PORT', 9912))
 clients = []
 sockets = []
 
+routes = aiohttp.web.RouteTableDef()
 
-async def http_handler(request):
+async def _handler(request, msg):
     res = aiohttp.web.Response(text="", content_type="text/html")
 
     for ws in sockets:
-        await ws.send_str('1')
+        await ws.send_str(msg)
 
     return res
 
@@ -33,31 +34,41 @@ async def _write(string):
         await ws.send_str(string)
 
 
-async def websocket_handler(request):
+@routes.post('/')
+async def toggle_like(request):
+    return await _handler(request, '1')
+
+
+@routes.post('/like')
+async def like(request):
+    return await _handler(request, '2')
+
+
+@routes.post('/dislike')
+async def dislike(request):
+    return await _handler(request, '3')
+
+
+@routes.get('/')
+async def ws_server(request):
     ws = aiohttp.web.WebSocketResponse()
     ws.headers['Access-Control-Allow-Origin'] = '*'
     await ws.prepare(request)
+
     sockets.append(ws)
     last_state = None
 
     async for msg in ws:
-        if msg.type == aiohttp.WSMsgType.TEXT:
-            state = msg.data
-
-            if state != last_state:
-                last_state = state
-
-                if state == "1":
-                    await _write("󰋑")
-
-                if state == "0":
-                    await _write("󰋕")
+        if msg.type == aiohttp.WSMsgType.TEXT and msg.data != last_state:
+            last_state = msg.data
+            await _write("󰋑" if last_state == '1' else "󰋕")
 
     sockets.remove(ws)
     return ws
 
 
-async def ws_client_handler(request):
+@routes.get('/client')
+async def ws_client(request):
     ws = aiohttp.web.WebSocketResponse()
     await ws.prepare(request)
     clients.append(ws)
@@ -68,26 +79,23 @@ async def ws_client_handler(request):
     clients.remove(ws)
     return ws
 
-# waybar executes program per output, 
-# hence we need to connect to the websocket and get the state asynchronously
-async def ws_client():
+
+async def main():
     session = aiohttp.ClientSession()
     async with session.ws_connect(f'http://{HOST}:{PORT}/client') as ws:
         async for msg in ws:
             if msg.type == aiohttp.WSMsgType.TEXT:
                 await _write(msg.data)
+
     await session.close()
 
 
 if __name__ == '__main__':
-    # If it's a second opened program, listen to the websocket for changes
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         if s.connect_ex((HOST, PORT)) == 0:
-            asyncio.run(ws_client())
+            asyncio.run(main())
             exit()
 
     app = aiohttp.web.Application()
-    app.router.add_route('GET', '/', websocket_handler)
-    app.router.add_route('GET', '/client', ws_client_handler)
-    app.router.add_route('POST', '/', http_handler)
+    app.add_routes(routes)
     aiohttp.web.run_app(app, host=HOST, port=PORT)
