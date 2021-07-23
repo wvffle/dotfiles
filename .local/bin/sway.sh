@@ -11,4 +11,6 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 
 export MOZ_ENABLE_WAYLAND=1
 
+export XDG_SESSION_TYPE=wayland
+export WLR_DRM_DEVICES=/dev/dri/card0:/dev/dri/card1
 /usr/bin/sway $@ 2> /tmp/sway.log
