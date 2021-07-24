@@ -125,6 +125,7 @@ bindsym $mod+x scratchpad show
 bindsym $mod+z exec i3-quickterm tmux
 bindsym $mod+n exec i3-quickterm js
 bindsym $mod+p exec i3-quickterm python
+bindsym $mod+g exec i3-quickterm files
 
 #
 # Screenshots

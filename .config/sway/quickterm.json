@@ -1,12 +1,13 @@
 {
     "menu": "rofi -dmenu -p 'quickterm: ' -no-custom -auto-select",
-    "term": "alacritty",
+    "term": "kitty",
     "history": "{$HOME}/.cache/i3-quickterm.order",
     "ratio": 0.4462,
     "pos": "top",
     "shells": {
         "js": "zsh -c 'tmux a -t node || tmux new -s node node'",
         "python": "zsh -c 'tmux a -t python || tmux new -s python ipython3 --no-banner'",
-        "tmux": "zsh -c 'tmux a -t quickterm || tmux new -s quickterm'"
+        "tmux": "zsh -c 'tmux a -t quickterm || tmux new -s quickterm'",
+        "files": "ranger"
     }
 }
