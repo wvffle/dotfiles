@@ -86,7 +86,8 @@ export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$HOME/.local/share/yarn/bin:$HOME
 # export LANG=en_US.UTF-8
 
 # Preferred editor
-export EDITOR='nvim'
+alias nvim=lvim
+export EDITOR='lvim'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -102,3 +103,5 @@ export EDITOR='nvim'
 
 # Change node version per directory
 source $NVM_DIR/chpwd-hook.zsh
+
+export QSYS_ROOTDIR="/home/waff/.cache/paru/clone/quartus-free/pkg/quartus-free-quartus/opt/intelFPGA/21.1/quartus/sopc_builder/bin"
