@@ -1,0 +1,15 @@
+[submodule ".tmux/plugins/tmux-net-speed"]
+	path = .tmux/plugins/tmux-net-speed
+	url = https://github.com/tmux-plugins/tmux-net-speed
+[submodule ".tmux/plugins/tmux-power"]
+	path = .tmux/plugins/tmux-power
+	url = https://github.com/wfxr/tmux-power
+[submodule ".tmux/plugins/tmux-prefix-highlight"]
+	path = .tmux/plugins/tmux-prefix-highlight
+	url = https://github.com/tmux-plugins/tmux-prefix-highlight
+[submodule ".tmux/plugins/tmux-sensible"]
+	path = .tmux/plugins/tmux-sensible
+	url = https://github.com/tmux-plugins/tmux-sensible
+[submodule ".tmux/plugins/tpm"]
+	path = .tmux/plugins/tpm
+	url = https://github.com/tmux-plugins/tpm
